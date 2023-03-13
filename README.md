@@ -43,13 +43,13 @@ $ yarn start:dev
 
 To Populate the database, you can run the endpoints below:
 
-5.1. [Populate Categories](#populate-categories)
+- [Populate Categories](#populate-categories)
 
 ```bash
 > localhost:3000/categories/populate GET
 ```
 
-5.2. [Populate Products](#populate-products)
+- [Populate Products](#populate-products)
 
 ```bash
 > localhost:3000/products/populate GET
