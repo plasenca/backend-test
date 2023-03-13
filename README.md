@@ -41,7 +41,7 @@ $ yarn start:dev
 
 5. [Populate the database](#populate-the-database)
 
-To Populate the database, you can run the endpoints below:
+To Populate the database, you can run the endpoints below in the following order:
 
 - [Populate Categories](#populate-categories)
 
