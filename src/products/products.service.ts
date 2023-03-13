@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Product } from './entities/product.entity';
 import { CreateProductDto, QueryCategoryDto } from './dto';
 import { CategoriesService } from 'src/categories/categories.service';
+//? Data to populate the database
+import * as products from './data/products.json';
 
 @Injectable()
 export class ProductsService {
@@ -42,14 +48,14 @@ export class ProductsService {
   }
 
   async find(queryCategoryDto: QueryCategoryDto) {
-    const { name } = queryCategoryDto;
+    const { category } = queryCategoryDto;
 
     //* Check if category exists
-    if (!name) {
+    if (!category) {
       return await this.productRepository.find({ relations: ['category'] });
     }
 
-    const { id: categoryId } = await this.categoriesService.findOne(name);
+    const { id: categoryId } = await this.categoriesService.findOne(category);
 
     return await this.productRepository.find({
       where: { category: { id: categoryId } },
@@ -65,5 +71,38 @@ export class ProductsService {
     }
 
     return product;
+  }
+
+  async populateProducts() {
+    for (const product of products) {
+      const { category, id, ...rest } = product;
+
+      const { name } = rest;
+
+      //* Check if category exists
+      const categoryEntity = await this.categoriesService.findOne(category);
+
+      //* Check if product exists
+      const productExists = await this.productRepository.findOne({
+        where: { name },
+      });
+
+      if (productExists) {
+        throw new BadRequestException('Product already exists');
+      }
+
+      //* Create product
+      const productEntity = this.productRepository.create({
+        category: categoryEntity,
+        ...rest,
+      });
+
+      await this.productRepository.save(productEntity);
+    }
+    return {
+      statusCode: 200,
+      message: 'Products populated successfully',
+      error: false,
+    };
   }
 }

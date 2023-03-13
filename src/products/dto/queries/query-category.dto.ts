@@ -3,8 +3,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 export class QueryCategoryDto {
-  @ApiProperty({description: 'Category name', uniqueItems: true, example: 'Ropa'})
+  @ApiProperty({description: 'Category name or Category ID', uniqueItems: true, example: 'Ropa'})
   @IsString()
   @IsOptional()
-  name: string;
+  category: string;
 }

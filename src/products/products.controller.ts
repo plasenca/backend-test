@@ -18,6 +18,13 @@ import { Product } from './entities/product.entity';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @ApiResponse({ status: 200, description: 'Products populated' })
+  @ApiResponse({ status: 404, description: 'Products already populated' })
+  @Get('populate')
+  async populate() {
+    return await this.productsService.populateProducts();
+  }
+
   @ApiResponse({
     status: 201,
     description: 'Product created',

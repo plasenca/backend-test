@@ -11,9 +11,9 @@ export class CategoriesController {
 
   //* Populate categories
 
-  @ApiResponse({ status: 201, description: 'Categories populated' })
+  @ApiResponse({ status: 200, description: 'Categories populated' })
   @ApiResponse({ status: 404, description: 'Category already exists' })
-  @Post('populate')
+  @Get('populate')
   async populateCategories() {
     return await this.categoriesService.populateCategories();
   }
