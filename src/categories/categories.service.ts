@@ -1,11 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { validate as isUUID } from 'uuid';
 
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 //? Data to populate
 import * as categories from './data/categories.json';
@@ -67,22 +70,6 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    const { name } = updateCategoryDto;
-
-    //* Check if category exists
-    await this.findOne(id);
-
-    this.categoryRepository.update({ id }, { name });
-  }
-
-  async remove(id: string) {
-    //* Check if category exists
-    await this.findOne(id);
-
-    return await this.categoryRepository.delete({ id });
-  }
-
   async populateCategories() {
     // * Create categories array
     const categoriesJson: Array<CreateCategoryDto> = JSON.parse(
@@ -95,15 +82,13 @@ export class CategoriesService {
         await this.create(category);
       }
     } catch (error: Error | any) {
-      return {
-        ok: false,
-        message: error.message,
-      };
+      throw new BadRequestException(error.message);
     }
 
     return {
-      ok: true,
-      message: 'Categories populated',
+      statusCode: 201,
+      message: 'Categories populated successfully',
+      error: false,
     };
   }
 }
